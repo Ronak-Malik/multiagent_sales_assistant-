@@ -1,24 +1,50 @@
-from fastapi import FastAPI
 from graph import graph
-from langchain_groq import ChatGroq 
+from langchain_groq import ChatGroq
+import os
+from dotenv import load_dotenv
 
-app = FastAPI()
+# 🔥 Load .env file
+load_dotenv()
 
-llm = ChatGroq(model="llama-3.1-8b-instant") 
+# 🔥 Get API key from env
+groq_api_key = os.getenv("GROQ_API_KEY")
 
-@app.post("/chat")
-def chat(user_id: str, message: str):
+if not groq_api_key:
+    raise ValueError("❌ GROQ_API_KEY not found in environment variables")
+
+# 🔥 Your test salesman ID
+USER_ID = "iPr3xaUi9DXQruUtefalaDVkAJH2"
+
+# 🔥 Initialize LLM
+llm = ChatGroq(
+    model="llama-3.1-8b-instant",
+    api_key=groq_api_key
+)
+
+def main():
 
     config = {
         "configurable": {
-            "thread_id": user_id
+            "thread_id": USER_ID
         }
     }
 
-    response = graph.invoke({
-        "input": message,
-        "user_id": user_id,
-        "llm": llm
-    }, config=config)
+    print("🤖 Sales AI Chatbot (type 'exit' to quit)\n")
 
-    return {"response": response["response"]}
+    while True:
+        query = input("You: ")
+
+        if query.lower() == "exit":
+            break
+
+        response = graph.invoke({
+            "input": query,
+            "user_id": USER_ID,
+            "llm": llm
+        }, config=config)
+
+        print("Bot:", response["response"])
+        print("-" * 50)
+
+if __name__ == "__main__":
+    main()

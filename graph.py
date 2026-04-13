@@ -1,10 +1,9 @@
-# graph.py
 from langgraph.graph import StateGraph
 from agents.summary_agent import summary_agent
 from agents.followup_agent import followup_agent
 from agents.general_agent import general_agent
 from supervisor import supervisor_node
-from langgraph.checkpoint import MemorySaver
+from langgraph.checkpoint.memory import MemorySaver
 
 builder = StateGraph(dict)
 
